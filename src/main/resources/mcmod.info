@@ -1,0 +1,16 @@
+[
+  {
+    "modid": "konoa77kg",
+    "name": "Konoa77kg",
+    "description": "",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": [],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]

@@ -1,0 +1,186 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (mmap) failed to map 4294967296 bytes for Failed to commit area from 0x00000005c0000000 to 0x00000006c0000000 of length 4294967296.
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+#   The process is running with CompressedOops enabled, and the Java Heap may be blocking the growth of the native heap
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (t:/workspace/open/src/hotspot/os/windows/os_windows.cpp:3221), pid=34484, tid=43620
+#
+# JRE version:  (10.0.2+13) (build )
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (10.0.2+13, mixed mode, aot, tiered, compressed oops, g1 gc, windows-amd64)
+# No core dump will be written. Minidumps are not enabled by default on client versions of Windows
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -Dfile.encoding=windows-31j -Duser.country=JP -Duser.language=ja -Duser.variant -Xms4G -Xmx8G net.md_5.specialsource.SpecialSource --in-jar D:\zip\konoa77kgmod\build\libs\konoa77kg-1.0-SNAPSHOT.jar --out-jar D:\zip\konoa77kgmod\build\reobfJar\output.jar --srg-in D:\zip\konoa77kgmod\build\createMcpToSrg\output.tsrg --live
+
+Host: Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz, 12 cores, 47G,  Windows 10 , 64 bit Build 18362 (10.0.18362.959)
+Time: Sun Aug 23 02:00:16 2020 ???? (?W?Ä??) elapsed time: 0 seconds (0d 0h 0m 0s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x0000016d2d8c5800):  JavaThread "Unknown thread" [_thread_in_vm, id=43620, stack(0x0000001338f00000,0x0000001339000000)]
+
+Stack: [0x0000001338f00000,0x0000001339000000]
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [jvm.dll+0x5a01a9]
+V  [jvm.dll+0x6bcf31]
+V  [jvm.dll+0x6be126]
+V  [jvm.dll+0x6be7b3]
+V  [jvm.dll+0x234978]
+V  [jvm.dll+0x59dac4]
+V  [jvm.dll+0x592825]
+V  [jvm.dll+0x2f632b]
+V  [jvm.dll+0x2f6295]
+V  [jvm.dll+0x2f6172]
+V  [jvm.dll+0x2f8366]
+V  [jvm.dll+0x344293]
+V  [jvm.dll+0x3449a6]
+V  [jvm.dll+0x344393]
+V  [jvm.dll+0x2c4628]
+V  [jvm.dll+0x2c5771]
+V  [jvm.dll+0x69d1db]
+V  [jvm.dll+0x69e9fc]
+V  [jvm.dll+0x3519e9]
+V  [jvm.dll+0x6856a2]
+V  [jvm.dll+0x3ba0c3]
+V  [jvm.dll+0x3bc261]
+C  [java.exe+0x3531]
+C  [java.exe+0xe1af]
+C  [java.exe+0xe356]
+C  [KERNEL32.DLL+0x17bd4]
+C  [ntdll.dll+0x6ce51]
+
+
+---------------  P R O C E S S  ---------------
+
+Threads class SMR info:
+_java_thread_list=0x0000016d2b398b80, length=0, elements={
+}
+
+Java Threads: ( => current thread )
+
+Other Threads:
+  0x0000016d2d8e0800 GCTaskThread "GC Thread#0" [stack: 0x0000001339000000,0x0000001339100000] [id=58260]
+  0x0000016d2d8e1800 GCTaskThread "GC Thread#1" [stack: 0x0000001339100000,0x0000001339200000] [id=12972]
+  0x0000016d2d8e3800 GCTaskThread "GC Thread#2" [stack: 0x0000001339200000,0x0000001339300000] [id=60132]
+  0x0000016d2d8e6800 GCTaskThread "GC Thread#3" [stack: 0x0000001339300000,0x0000001339400000] [id=25784]
+  0x0000016d2d8e8000 GCTaskThread "GC Thread#4" [stack: 0x0000001339400000,0x0000001339500000] [id=13756]
+  0x0000016d2d8eb000 GCTaskThread "GC Thread#5" [stack: 0x0000001339500000,0x0000001339600000] [id=57720]
+  0x0000016d2d8ed000 GCTaskThread "GC Thread#6" [stack: 0x0000001339600000,0x0000001339700000] [id=53656]
+  0x0000016d2d8f0000 GCTaskThread "GC Thread#7" [stack: 0x0000001339700000,0x0000001339800000] [id=44644]
+  0x0000016d2d8f5800 GCTaskThread "GC Thread#8" [stack: 0x0000001339800000,0x0000001339900000] [id=42816]
+  0x0000016d2d8f6800 GCTaskThread "GC Thread#9" [stack: 0x0000001339900000,0x0000001339a00000] [id=19568]
+  0x0000016d2d966000 ConcurrentGCThread "G1 Main Marker" [stack: 0x0000001339a00000,0x0000001339b00000] [id=20440]
+  0x0000016d2d96b000 ConcurrentGCThread "G1 Conc#0" [stack: 0x0000001339b00000,0x0000001339c00000] [id=58928]
+  0x0000016d2d96b800 ConcurrentGCThread "G1 Conc#1" [stack: 0x0000001339c00000,0x0000001339d00000] [id=59024]
+  0x0000016d2d96e000 ConcurrentGCThread "G1 Conc#2" [stack: 0x0000001339d00000,0x0000001339e00000] [id=60020]
+
+[error occurred during error reporting (printing all threads), id 0xe0000002]
+
+VM state:not at safepoint (not fully initialized)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x0000016d2d8c38b0] Heap_lock - owner thread: 0x0000016d2d8c5800
+
+Heap address: 0x00000005c0000000, size: 8192 MB, Compressed Oops mode: Non-zero based: 0x00000005c0000000
+Narrow klass base: 0x0000000000000000, Narrow klass shift: 0
+
+GC Heap History (0 events):
+No events
+
+Deoptimization events (0 events):
+No events
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (0 events):
+No events
+
+Events (0 events):
+No events
+
+
+Dynamic libraries:
+0x00007ff6a0430000 - 0x00007ff6a046e000 	C:\Program Files\Java\jdk-10.0.2\bin\java.exe
+0x00007fff31220000 - 0x00007fff31410000 	C:\WINDOWS\SYSTEM32\ntdll.dll
+0x00007fff2fbb0000 - 0x00007fff2fc62000 	C:\WINDOWS\System32\KERNEL32.DLL
+0x00007fff2ec50000 - 0x00007fff2eef4000 	C:\WINDOWS\System32\KERNELBASE.dll
+0x00007fff2fec0000 - 0x00007fff2ff63000 	C:\WINDOWS\System32\ADVAPI32.dll
+0x00007fff307d0000 - 0x00007fff3086e000 	C:\WINDOWS\System32\msvcrt.dll
+0x00007fff2fc70000 - 0x00007fff2fd07000 	C:\WINDOWS\System32\sechost.dll
+0x00007fff2f300000 - 0x00007fff2f420000 	C:\WINDOWS\System32\RPCRT4.dll
+0x00007fff2f910000 - 0x00007fff2faa5000 	C:\WINDOWS\System32\USER32.dll
+0x00007fff2ebd0000 - 0x00007fff2ebf1000 	C:\WINDOWS\System32\win32u.dll
+0x00007fff2fd10000 - 0x00007fff2fd36000 	C:\WINDOWS\System32\GDI32.dll
+0x00007fff2ea30000 - 0x00007fff2ebc6000 	C:\WINDOWS\System32\gdi32full.dll
+0x00007fff2f0b0000 - 0x00007fff2f14e000 	C:\WINDOWS\System32\msvcp_win.dll
+0x00007fff2e1a0000 - 0x00007fff2e29a000 	C:\WINDOWS\System32\ucrtbase.dll
+0x00007fff1c3c0000 - 0x00007fff1c644000 	C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.18362.1016_none_9e7a36bbe461dae4\COMCTL32.dll
+0x00007fff27540000 - 0x00007fff2754a000 	C:\WINDOWS\SYSTEM32\VERSION.dll
+0x00007fff30060000 - 0x00007fff30395000 	C:\WINDOWS\System32\combase.dll
+0x00007fff2efb0000 - 0x00007fff2f030000 	C:\WINDOWS\System32\bcryptPrimitives.dll
+0x00007fff2f2d0000 - 0x00007fff2f2fe000 	C:\WINDOWS\System32\IMM32.DLL
+0x00007fff0ba90000 - 0x00007fff0bb7f000 	C:\Program Files\Java\jdk-10.0.2\bin\msvcr120.dll
+0x00007fff02180000 - 0x00007fff02226000 	C:\Program Files\Java\jdk-10.0.2\bin\msvcp120.dll
+0x0000000073fc0000 - 0x0000000074a30000 	C:\Program Files\Java\jdk-10.0.2\bin\server\jvm.dll
+0x00007fff30fc0000 - 0x00007fff30fc8000 	C:\WINDOWS\System32\PSAPI.DLL
+0x00007fff1c650000 - 0x00007fff1c659000 	C:\WINDOWS\SYSTEM32\WSOCK32.dll
+0x00007fff2aba0000 - 0x00007fff2abc4000 	C:\WINDOWS\SYSTEM32\WINMM.dll
+0x00007fff2fff0000 - 0x00007fff3005f000 	C:\WINDOWS\System32\WS2_32.dll
+0x00007fff2ab60000 - 0x00007fff2ab8d000 	C:\WINDOWS\SYSTEM32\WINMMBASE.dll
+0x00007fff2ec00000 - 0x00007fff2ec4a000 	C:\WINDOWS\System32\cfgmgr32.dll
+0x00007fff18f20000 - 0x00007fff18f2f000 	C:\Program Files\Java\jdk-10.0.2\bin\verify.dll
+0x00007fff236a0000 - 0x00007fff23894000 	C:\WINDOWS\SYSTEM32\DBGHELP.DLL
+0x00007fff239e0000 - 0x00007fff23a0a000 	C:\WINDOWS\SYSTEM32\dbgcore.DLL
+0x00007fff14330000 - 0x00007fff14357000 	C:\Program Files\Java\jdk-10.0.2\bin\java.dll
+0x00007fff142e0000 - 0x00007fff142f6000 	C:\Program Files\Java\jdk-10.0.2\bin\zip.dll
+0x00007fff18d20000 - 0x00007fff18d2a000 	C:\Program Files\Java\jdk-10.0.2\bin\jimage.dll
+
+dbghelp: loaded successfully - version: 4.0.5 - missing functions: none
+symbol engine: initialized successfully - sym options: 0x614 - pdb path: .;C:\Program Files\Java\jdk-10.0.2\bin;C:\WINDOWS\SYSTEM32;C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.18362.1016_none_9e7a36bbe461dae4;C:\Program Files\Java\jdk-10.0.2\bin\server
+
+VM Arguments:
+jvm_args: -Dfile.encoding=windows-31j -Duser.country=JP -Duser.language=ja -Duser.variant -Xms4G -Xmx8G 
+java_command: net.md_5.specialsource.SpecialSource --in-jar D:\zip\konoa77kgmod\build\libs\konoa77kg-1.0-SNAPSHOT.jar --out-jar D:\zip\konoa77kgmod\build\reobfJar\output.jar --srg-in D:\zip\konoa77kgmod\build\createMcpToSrg\output.tsrg --live
+java_class_path (initial): C:\Users\ICE\.gradle\caches\forge_gradle\maven_downloader\net\md-5\SpecialSource\1.8.3\SpecialSource-1.8.3-shaded.jar;C:\Users\ICE\.gradle\caches\forge_gradle\minecraft_user_repo\net\minecraftforge\forge\1.12.2-14.23.5.2854_mapped_stable_39-1.12\forge-1.12.2-14.23.5.2854_mapped_stable_39-1.12-recomp.jar;C:\Users\ICE\.gradle\caches\forge_gradle\minecraft_repo\versions\1.12.2\client-extra.jar;C:\Users\ICE\.gradle\caches\modules-2\files-2.1\com.google.code.findbugs\jsr305\3.0.1\f7be08ec23c21485b9b5a1cf1654c2ec8c58168d\jsr305-3.0.1.jar;C:\Users\ICE\.gradle\caches\modules-2\files-2.1\net.minecraftforge\mergetool\1.0.13\c18446ec4d5814f447d7a79b314ba9a27cc8dbc8\mergetool-1.0.13-forge.jar;C:\Users\ICE\.gradle\caches\forge_gradle\maven_downloader\de\oceanlabs\mcp\mcp_stable\39-1.12\mcp_stable-39-1.12.zip;C:\Users\ICE\.gradle\caches\modules-2\files-2.1\org.ow2.asm\asm-debug-all\5.2\3354e11e2b34215f06dab629ab88e06aca477c19\asm-debug-all-5.2.jar;C:\Users\ICE\.gradle\caches\modules-2\files-2.1\net.minecraft\launchwrapper\1.12\111e7bea9c968cdb3d06ef4632bf7ff0824d0f36\launchwrapper-1.12.jar;C:\Users\ICE\.gradle\caches\modules-2\files-2.1\org.jline\jline\3.5.1\51800e9d7a13608894a5a28eed0f5c7fa2f300fb\jline-3.5.1.jar;C:\Users\ICE\.gradle\caches\modules-2\files-2.1\com.typesafe.akka\akka-actor_2.11\2.3.3\ed62e9fc709ca0f2ff1a3220daa8b70a2870078e\akka-actor_2.11-2.3.3.jar;C:\Users\ICE\.gradle\caches\modules-2\files-2.1\com.typesafe\config\1.2.1\f771f71fdae3df231bcd54d5ca2d57f0bf93f467\config-1.2.1.jar;C:\Users\ICE\.gradle\caches\modules-2\files-2.1\org.scala-lang\scala-actors-migration_2.11\1.1.0\dfa8bc42b181d5b9f1a5dd147f8ae308b893eb6f\scala-actors-migration_2.11-1.1.0.jar;C:\Users\ICE\.gradle\caches\modules-2\files-2.1\org.scala-lang\scala-compiler\2.11.1\56ea2e6c025e0821f28d73ca271218b8dd04926a\scala-compiler-2.11.1.jar;C:\Users\ICE\.gradle\caches\modules-2\files-2.1\org.scala-lang.plugins\scala-continuations-library_2.11\1.0.2_mc\e517c53a7e9acd6b1668c5a
+Launcher Type: SUN_STANDARD
+
+Logging:
+Log output configuration:
+#0: stdout all=warning uptime,level,tags
+#1: stderr all=off uptime,level,tags
+
+Environment Variables:
+JAVA_HOME=C:\Program Files\Java\jdk1.8.0_261
+_JAVA_OPTIONS=-Xms4G -Xmx8G
+PATH=C:\Program Files\Java\jdk1.8.0_261\bin;C:\Program Files (x86)\Nodist\bin;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files\dotnet\;D:\tor\êVÇµÇ¢ÉtÉHÉãÉ_Å[ (5)\ImageMagick-7.0.10-27-portable-Q16-x64;C:\Program Files\Java\jdk1.8.0_261\bin;C:\Users\ICE\AppData\Local\Programs\Python\Python38-32\Scripts\;C:\Users\ICE\AppData\Local\Programs\Python\Python38-32\;D:\cre\cocos2d-x-4.0\templates;D:\cre\cocos2d-x-4.0\tools\cocos2d-console\bin;C:\Users\ICE\AppData\Local\Microsoft\WindowsApps;C:\Users\ICE\AppData\Local\Android\Sdk\platform-tools;D:\cre\cocos2d-x-4.0\tools\cocos2d-console\bin;D:\zip\ffmpeg-20200102-81172b5-win64-static\bin;D:\zip\ILMerge;C:\Users\ICE\AppData\Local\atom\bin;C:\Users\ICE\AppData\Roaming\npm;C:\Program Files\vim82-kaoriya-win64;C:\Users\ICE\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files (x86)\Nodist\bin\node_modules\yarn\bin;C:\Program Files (x86)\Nodist\bin;C:\Windows\System32;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2020.2\bin;;C:\Users\ICE\.dotnet\tools;D:\tor\êVÇµÇ¢ÉtÉHÉãÉ_Å[ (5)\ImageMagick-7.0.10-27-portable-Q16-x64;D:\Modi\IntelliJ IDEA 2019.1.4\bin;;C:\Program Files\jad158g.win;
+USERNAME=ICE
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 158 Stepping 10, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 10 , 64 bit Build 18362 (10.0.18362.959)
+
+CPU:total 12 (initial active 12) (6 cores per cpu, 2 threads per core) family 6 model 158 stepping 10, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, avx2, aes, clmul, erms, rtm, 3dnowpref, lzcnt, ht, tsc, tscinvbit, bmi1, bmi2, adx, fma
+
+Memory: 4k page, physical 50266404k(33121084k free), swap 51290404k(680912k free)
+
+vm_info: Java HotSpot(TM) 64-Bit Server VM (10.0.2+13) for windows-amd64 JRE (10.0.2+13), built on Jun 28 2018 01:57:56 by "mach5one" with MS VC++ 12.0 (VS2013)
+
+END.
