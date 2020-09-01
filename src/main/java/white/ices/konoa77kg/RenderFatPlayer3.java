@@ -61,11 +61,7 @@ public class RenderFatPlayer3 extends RenderLivingBase<EntityPlayer> {
     }
 
     public ModelFat1 getMainModel() {
-        for (EntityPlayer player : this.man.world.getPlayers(EntityPlayer.class, new Predicate<EntityPlayer>() {
-            public boolean apply(EntityPlayer input) {
-                return true;
-            }
-        })) {
+        for (EntityPlayer player : this.man.world.getPlayers(EntityPlayer.class, input -> true)) {
             if (DefaultPlayerSkin.getSkinType(player.getUniqueID()).equals("slim")) {
                 isSmallArms = true;
                 continue;
@@ -134,7 +130,7 @@ public class RenderFatPlayer3 extends RenderLivingBase<EntityPlayer> {
             modelplayer.isSneak = entity.isSneaking();
             ModelBiped.ArmPose modelbiped$armpose = ModelBiped.ArmPose.EMPTY;
             ModelBiped.ArmPose modelbiped$armpose1 = ModelBiped.ArmPose.EMPTY;
-            if (!itemstack.isEmpty()) {
+            if (itemstack.isEmpty()) {
                 modelbiped$armpose = ModelBiped.ArmPose.ITEM;
                 if (entity.getItemInUseCount() > 0) {
                     EnumAction enumaction = itemstack.getItemUseAction();
@@ -145,7 +141,7 @@ public class RenderFatPlayer3 extends RenderLivingBase<EntityPlayer> {
                     }
                 }
             }
-            if (!itemstack1.isEmpty()) {
+            if (itemstack1.isEmpty()) {
                 modelbiped$armpose1 = ModelBiped.ArmPose.ITEM;
                 if (entity.getItemInUseCount() > 0) {
                     EnumAction enumaction1 = itemstack1.getItemUseAction();

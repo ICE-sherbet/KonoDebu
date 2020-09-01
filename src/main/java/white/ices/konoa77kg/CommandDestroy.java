@@ -31,9 +31,18 @@ public class CommandDestroy extends CommandBase {
         if (args.length==0)return;
         EntityPlayer EPtarget = (!isNumeric(args[0])) ? getPlayer(server, sender, args[0]) : getCommandSenderAsPlayer(sender);
         if (EPtarget == null)return;
-        if (!isNumeric(args[args.length-1]))return;;
+        if (!isNumeric(args[args.length-1]))return;
         IKonoFat fat = EPtarget.getCapability(KonoFatProvider.Fat_CAP, null);
         fat.setThickness(Integer.parseInt(args[args.length-1]));
+
+        PacketHander.INSTANCE.sendToAll(
+                new MessageInstruments(
+                        (float)EPtarget.posX,
+                        (float)EPtarget.posY,
+                        (float)EPtarget.posZ,
+                        EPtarget.getUniqueID().toString(),
+                        EPtarget.getEntityId(),
+                        Integer.parseInt(args[args.length-1]) ));
     }
     private static boolean isNumeric(String str) {
         return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.

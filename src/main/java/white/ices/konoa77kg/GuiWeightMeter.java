@@ -13,9 +13,10 @@ public class GuiWeightMeter extends Gui {
 
     String text2;
 
-    public GuiWeightMeter(Minecraft mc) {
-        this.text = "Weight Level: " + String.valueOf(mc.player.getCapability(KonoFatProvider.Fat_CAP, null).getThickness() / 2) + " / 40";
-        this.text2 = "Saturation Level: " + Konoa77kg.testCo + "  Jumping jacks: " + Konoa77kg.jumpCount;
+    public GuiWeightMeter(Minecraft mc,int tic) {
+
+        this.text = "Weight Level: " + String.valueOf(tic) + " / 40";
+        this.text2 = "Saturation Level: " + Konoa77kg.fatClient + "  Jumping jacks: " + Konoa77kg.jumpCount;
 
         ScaledResolution scaled = new ScaledResolution(mc);
         int width = scaled.getScaledWidth();

@@ -39,7 +39,7 @@ public class ModelFat1 extends ModelPlayer {
         this.larm = new ModelRenderer((ModelBase)this, 32, 48);
         this.rarm = new ModelRenderer((ModelBase)this, 40, 16);
         bellyFatModifier = bellyFat / 2;
-        if (bellyFatModifier > 32 && true) {
+        if (bellyFatModifier > 32 || true) {
             int modifiedFat = 0;
             this.Shape1.addBox(0.0F, 0.0F, -5.0F - modifiedFat, 6, 5, 3 + modifiedFat);
             if (smallArmsIn) {
