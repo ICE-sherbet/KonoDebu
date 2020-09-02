@@ -65,9 +65,7 @@ public class MessageInstruments
     {
         switch ( FMLCommonHandler.instance().getEffectiveSide() ) {
             case CLIENT:
-                Konoa77kg.instace.fatCO(message.fatlevel);
-                Konoa77kg.instace.fatUUID(message.entityUUID);
-
+                Konoa77kg.instace.fatUserlist(message.entityUUID,message.fatlevel);
 
             case SERVER:
                 break;

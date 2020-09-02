@@ -12,5 +12,6 @@ public class PacketHander {
     public static void init() {
 
         INSTANCE.registerMessage(MessageInstruments.class, MessageInstruments.class, 0, Side.CLIENT);
+        INSTANCE.registerMessage(MessagePlayerJoinInAnoucementHandler.class, MessagePlayerJoinInAnnouncement.class, 1, Side.SERVER);
     }
 }

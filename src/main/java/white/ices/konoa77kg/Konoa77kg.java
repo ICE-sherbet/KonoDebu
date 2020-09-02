@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.entity.RenderEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemFood;
@@ -16,6 +17,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.DimensionType;
@@ -26,10 +29,10 @@ import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -39,6 +42,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -46,7 +50,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.ArrayList;
+import java.util.*;
 
 
 @Mod(
@@ -64,6 +68,8 @@ public class Konoa77kg {
 
     @SideOnly(Side.CLIENT)
     public static RenderFatPlayer3 render;
+
+    static HashMap<String, Integer> fatlist = new HashMap<String,Integer>();
 
     public static ArrayList<BreakEv> arr =  new ArrayList<BreakEv>();
     public static ArrayList<BlockPos> destroyblocks =  new ArrayList<BlockPos>();
@@ -93,24 +99,8 @@ public class Konoa77kg {
     /**
      * This is the final initialization event. Register actions from other mods here
      */
-    @SubscribeEvent
-    public void onLivingHurt(LivingHurtEvent event) {
-        Entity sourceEntity = event.getSource().getImmediateSource();
-        if ((event.getEntityLiving() instanceof EntityIronGolem ) && (sourceEntity instanceof EntityPlayer)) {
 
 
-            sourceEntity.attackEntityFrom(DamageSource.causeMobDamage(event.getEntityLiving()), event.getAmount());
-        }
-    }
-    @SubscribeEvent
-    public static void itemClickEvent(PlayerInteractEvent.RightClickItem e) {
-        if (e.getItemStack().getItem() instanceof ItemFood)
-
-            jumpCount++;
-            ((ItemFood)e.getItemStack().getItem()).setAlwaysEdible();
-
-            if(e.getSide().isServer())BlockBre(e.getPos().down(),e.getWorld());
-    }
     static int testCo = 0;
 
     public static final ResourceLocation Fat_CAP = new ResourceLocation("konoa77kg", "fat");
@@ -120,6 +110,19 @@ public class Konoa77kg {
         if (!(event.getObject() instanceof EntityPlayer)) return;
 
         event.addCapability(Fat_CAP, new KonoFatProvider());
+    }
+
+    @SubscribeEvent
+    public void respawnEvent(PlayerEvent.PlayerRespawnEvent event) {
+        if (!event.player.world.isRemote) {
+            PacketHander.INSTANCE.sendTo( new MessageInstruments(
+                    (float)event.player.posX,
+                    (float)event.player.posY,
+                    (float)event.player.posZ,
+                    event.player.getUniqueID().toString(),
+                    event.player.getEntityId(),
+                    event.player.getCapability(KonoFatProvider.Fat_CAP, null).getThickness()), (EntityPlayerMP)event.player);
+        }
     }
     @SubscribeEvent
     public void onRenderGui(RenderGameOverlayEvent.Post e) {
@@ -142,6 +145,14 @@ public class Konoa77kg {
     }
 
     @SubscribeEvent
+    public void onEntityJoinWorld(EntityJoinWorldEvent event)  {
+        if (event.getWorld().isRemote && event.getEntity() instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer)event.getEntity();
+            PacketHander.INSTANCE.sendToServer(new MessagePlayerJoinInAnnouncement(player));
+        }
+    }
+
+    @SubscribeEvent
     public void onPlayerLoggout(PlayerLoggedOutEvent event) {
         logged = false;
         IKonoFat fat = event.player.getCapability(KonoFatProvider.Fat_CAP, null);
@@ -155,6 +166,10 @@ public class Konoa77kg {
     public static void fatUUID(String uuid){
         fatEntity = uuid;
     }
+    @SideOnly(Side.CLIENT)
+    public static void fatUserlist(String uuid,int fats){
+        fatlist.put(uuid,fats);
+    }
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
@@ -164,10 +179,10 @@ public class Konoa77kg {
         //e.getEntity().sendMessage(new TextComponentString("Name:" + e.getEntity().getName()));
         //IKonoFat fat = e.getEntityPlayer().getCapability(KonoFatProvider.Fat_CAP, null);
         //e.getEntity().sendMessage(new TextComponentString("Co:" + String.valueOf(fatClient)));
-        if(fatClient<1)return;
+        if(fatlist.get(e.getEntityPlayer().getUniqueID().toString())<1)return;
         e.setCanceled(true);
         render = new RenderFatPlayer3(e.getRenderer().getRenderManager(), e.getEntityPlayer());
-        render.setT(fatClient);
+        render.setT(fatlist.get(e.getEntityPlayer().getUniqueID().toString()));
         render.doRender(e.getEntityPlayer(), e.getX(), e.getY(), e.getZ(), (e.getEntityPlayer()).rotationYawHead, e.getPartialRenderTick());
     }
 
@@ -208,37 +223,43 @@ public class Konoa77kg {
                 int bellyFatModifier = fat.getThickness();
                 if (bellyFatModifier / 2 > 20) {
 
-                    if (e.side == Side.SERVER && true){
+                    if (e.side == Side.SERVER && true) {
 
-                        BlockPos BreakPos = new BlockPos((int) player.posX, (int) player.posY - 1, (int) player.posZ);
-                        flag = true;
                         int i = 0;
-                        if (Bcount != 0) {
-                            for (BreakEv b : arr) {
-                                if (b.getBpos().getX() == BreakPos.getX() && b.getBpos().getZ() == BreakPos.getZ() && b.getBpos().getY() == BreakPos.getY()) {
+                        List<BlockPos> BreakPostion = new ArrayList<BlockPos>(new HashSet<>(Arrays.asList(
+                                new BlockPos(Math.floor(player.posX-.5f), Math.floor(player.posY) - 1, Math.floor(player.posZ-.5f)),
+                                new BlockPos(Math.round(player.posX), Math.floor(player.posY) - 1, Math.floor(player.posZ-.5f)),
+                                new BlockPos(Math.floor(player.posX-.5f), Math.floor(player.posY) - 1, Math.round(player.posZ)),
+                                new BlockPos(Math.round(player.posX), Math.floor(player.posY) - 1, Math.round(player.posZ)))));
+                        for (BlockPos BreakPos : BreakPostion) {
+                            flag = true;
+                            if (Bcount != 0) {
+                                for (BreakEv b : arr) {
 
-                                    flag = false;
-                                    if (!b.Breakprg(0.1f, player.world)) {
-                                        World wc = e.player.world;
-                                        IBlockState oldState = wc.getBlockState(b.getBpos());
-                                        IBlockState old = wc.getBlockState(b.getBpos());
-                                        wc.destroyBlock(b.getBpos(), true);
-                                        wc.setBlockState(b.getBpos(),
-                                                Blocks.AIR.getBlockState().getBaseState());
-                                        wc.notifyBlockUpdate(b.getBpos(), old,
-                                                Blocks.AIR.getBlockState().getBaseState(), 2);
+                                    if (b.getBpos().getX() == BreakPos.getX() && b.getBpos().getZ() == BreakPos.getZ() && b.getBpos().getY() == BreakPos.getY()) {
 
-                                        arr.remove(b);
-                                        break;
+                                        flag = false;
+                                        if (!b.Breakprg(0.1f, player.world)) {
+                                            World wc = e.player.world;
+                                            IBlockState old = wc.getBlockState(b.getBpos());
+                                            wc.destroyBlock(b.getBpos(), true);
+                                            wc.setBlockState(b.getBpos(),
+                                                    Blocks.AIR.getBlockState().getBaseState());
+                                            wc.notifyBlockUpdate(b.getBpos(), old,
+                                                    Blocks.AIR.getBlockState().getBaseState(), 2);
 
+                                            arr.remove(b);
+                                            break;
+
+                                        }
                                     }
                                 }
+                                i++;
                             }
-                            i++;
+
+
+                            if (flag) arr.add(new BreakEv(BreakPos, player.world));
                         }
-
-
-                        if (flag) arr.add(new BreakEv(BreakPos, player.world));
                     }
                     if (player.isAirBorne)
                         this.Count++;
