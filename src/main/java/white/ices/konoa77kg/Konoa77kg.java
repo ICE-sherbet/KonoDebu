@@ -5,7 +5,9 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.RenderEntity;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -16,9 +18,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.*;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.DimensionType;
@@ -170,6 +170,11 @@ public class Konoa77kg {
     public static void fatUserlist(String uuid,int fats){
         fatlist.put(uuid,fats);
     }
+    @SideOnly(Side.SERVER)
+    public static void DamageEntity(Entity entity,int Damage){
+        entity.attackEntityFrom(DamageSource.MAGIC, Damage);
+
+    }
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
@@ -179,6 +184,8 @@ public class Konoa77kg {
         //e.getEntity().sendMessage(new TextComponentString("Name:" + e.getEntity().getName()));
         //IKonoFat fat = e.getEntityPlayer().getCapability(KonoFatProvider.Fat_CAP, null);
         //e.getEntity().sendMessage(new TextComponentString("Co:" + String.valueOf(fatClient)));
+
+        if(fatlist.get(e.getEntityPlayer().getUniqueID().toString())==null)return;
         if(fatlist.get(e.getEntityPlayer().getUniqueID().toString())<1)return;
         e.setCanceled(true);
         render = new RenderFatPlayer3(e.getRenderer().getRenderManager(), e.getEntityPlayer());
@@ -189,7 +196,7 @@ public class Konoa77kg {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void renderEvent(RenderSpecificHandEvent e) {
-        if(!Minecraft.getMinecraft().player.getGameProfile().getId().toString().equals(fatEntity))return;
+        if(!Minecraft.getMinecraft().player.getUniqueID().toString().equals(fatEntity))return;
 
         e.setCanceled(true);
         if (render != null)
@@ -212,18 +219,43 @@ public class Konoa77kg {
 
         if (e.player.hasCapability(KonoFatProvider.Fat_CAP, null)) {
             IKonoFat fat = e.player.getCapability(KonoFatProvider.Fat_CAP, null);
-            if (e.side.isClient() && render != null)
-                render.setT(fat.getThickness());
+            if (e.side.isClient()) {
+                if(e.player.capabilities != null) {
+                    //e.player.isSprinting();
+                    EntityPlayer player = e.player;
+                }
+                if (render != null){
+                    render.setT(fat.getThickness());
+                }
+            }
         }
         if (logged) {
             EntityPlayer player = e.player;
 
             if (player.hasCapability(KonoFatProvider.Fat_CAP, null)) {
                 IKonoFat fat = player.getCapability(KonoFatProvider.Fat_CAP, null);
-                int bellyFatModifier = fat.getThickness();
+
+                int bellyFatModifier = fat.getThickness();//fatlist.get(player.getUniqueID().toString());
+
                 if (bellyFatModifier / 2 > 20) {
 
                     if (e.side == Side.SERVER && true) {
+                        do {
+                            if(player == null)break;;
+                            if(!player.isSprinting())break;
+                            AxisAlignedBB axis = player.getEntityBoundingBox();//new AxisAlignedBB(player.posX, player.posY, player.posZ, player.lastTickPosX, player.lastTickPosY, player.lastTickPosZ).grow(0.25);
+                            List<EntityLivingBase> entities = player.getEntityWorld().getEntitiesWithinAABB(EntityLivingBase.class, axis);
+                            for (Entity entity : entities) {
+                                if(player.getUniqueID().equals(entity.getUniqueID()))continue;
+
+                                float f = 5;
+                                    entity.motionX = (double)(-MathHelper.sin(player.rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(player.rotationPitch / 180.0F * (float)Math.PI) * f);
+                                    entity.motionZ = (double)(MathHelper.cos(player.rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(player.rotationPitch / 180.0F * (float)Math.PI) * f);
+                                    entity.motionY = (double)(-MathHelper.sin((player.rotationPitch / 180.0F * (float)Math.PI) * f));
+
+                                entity.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) player), 5);
+                            }
+                        }while (false);
 
                         int i = 0;
                         List<BlockPos> BreakPostion = new ArrayList<BlockPos>(new HashSet<>(Arrays.asList(

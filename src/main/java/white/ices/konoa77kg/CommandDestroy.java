@@ -31,7 +31,7 @@ public class CommandDestroy extends CommandBase {
         if (args.length==0)return;
         EntityPlayer EPtarget = (!isNumeric(args[0])) ? getPlayer(server, sender, args[0]) : getCommandSenderAsPlayer(sender);
         if (EPtarget == null)return;
-        if (!isNumeric(args[args.length-1]))return;
+        if (!isNumeric(args[args.length-1]))return;;
         IKonoFat fat = EPtarget.getCapability(KonoFatProvider.Fat_CAP, null);
         fat.setThickness(Integer.parseInt(args[args.length-1]));
 

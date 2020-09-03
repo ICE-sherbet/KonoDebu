@@ -12,8 +12,9 @@ public class MessagePlayerJoinInAnoucementHandler implements IMessageHandler<Mes
         String uuidString = message.getUuid();
         EntityPlayer player = ctx.getServerHandler().player;
         //
-        if (player.getGameProfile().getId().toString().equals(uuidString)) {
+        if (player.getUniqueID().toString().equals(uuidString)) {
             //
+
             return new MessageInstruments(
                     (float)player.posX,
                     (float)player.posY,

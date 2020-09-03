@@ -12,6 +12,7 @@ public class PacketHander {
     public static void init() {
 
         INSTANCE.registerMessage(MessageInstruments.class, MessageInstruments.class, 0, Side.CLIENT);
+        //INSTANCE.registerMessage(PacketDamageEntity.Handler.class, PacketDamageEntity.class, 2, Side.SERVER);
         INSTANCE.registerMessage(MessagePlayerJoinInAnoucementHandler.class, MessagePlayerJoinInAnnouncement.class, 1, Side.SERVER);
     }
 }
