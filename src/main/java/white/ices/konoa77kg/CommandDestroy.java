@@ -8,6 +8,7 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
@@ -34,6 +35,8 @@ public class CommandDestroy extends CommandBase {
         if (!isNumeric(args[args.length-1]))return;;
         IKonoFat fat = EPtarget.getCapability(KonoFatProvider.Fat_CAP, null);
         fat.setThickness(Integer.parseInt(args[args.length-1]));
+        PlayerFat playerMana = PlayerProperties.getPlayerMana(EPtarget);
+        playerMana.setMana(Integer.parseInt(args[args.length-1]));
 
         PacketHander.INSTANCE.sendToAll(
                 new MessageInstruments(
@@ -43,6 +46,9 @@ public class CommandDestroy extends CommandBase {
                         EPtarget.getUniqueID().toString(),
                         EPtarget.getEntityId(),
                         Integer.parseInt(args[args.length-1]) ));
+        Konoa77kg.Sefatlist.put(EPtarget.getUniqueID().toString(),Integer.parseInt(args[args.length-1]) );
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setInteger("Fat"+EPtarget.getUniqueID().toString(),Integer.parseInt(args[args.length-1]) );
     }
     private static boolean isNumeric(String str) {
         return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.

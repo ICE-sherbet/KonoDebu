@@ -30,5 +30,6 @@ public class CFat implements IKonoFat{
         } else {
             thickness = 80;
         }
+
     }
 }

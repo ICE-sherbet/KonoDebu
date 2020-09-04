@@ -6,6 +6,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.RenderEntity;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityIronGolem;
@@ -50,6 +55,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 
@@ -70,6 +76,7 @@ public class Konoa77kg {
     public static RenderFatPlayer3 render;
 
     static HashMap<String, Integer> fatlist = new HashMap<String,Integer>();
+    static HashMap<String, Integer> Sefatlist = new HashMap<String,Integer>();
 
     public static ArrayList<BreakEv> arr =  new ArrayList<BreakEv>();
     public static ArrayList<BlockPos> destroyblocks =  new ArrayList<BlockPos>();
@@ -78,6 +85,19 @@ public class Konoa77kg {
     @Mod.EventHandler
     public void preinit(FMLPreInitializationEvent event) {
         PacketHander.init();
+
+        CapabilityManager.INSTANCE.register(PlayerFat.class, new Capability.IStorage<PlayerFat>() {
+            @Nullable
+            @Override
+            public NBTBase writeNBT(Capability<PlayerFat> capability, PlayerFat instance, EnumFacing side) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void readNBT(Capability<PlayerFat> capability, PlayerFat instance, EnumFacing side, NBTBase nbt) {
+                throw new UnsupportedOperationException();
+            }
+        }, () -> null);
         CapabilityManager.INSTANCE.register(IKonoFat.class, new IKonoFatStorage(), CFat::new);
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -107,11 +127,25 @@ public class Konoa77kg {
     @SubscribeEvent
     public void attachCapability(AttachCapabilitiesEvent<Entity> event)
     {
-        if (!(event.getObject() instanceof EntityPlayer)) return;
+        if (!(event.getObject() instanceof Entity)) return;
+        NBTTagCompound nbt = new NBTTagCompound();
 
+        if (!event.getObject().hasCapability(PlayerProperties.PLAYER_FAT, null))
+        event.addCapability(new ResourceLocation(MOD_ID, "Mana"), new PropertiesDispatcher());
         event.addCapability(Fat_CAP, new KonoFatProvider());
     }
 
+    @SubscribeEvent
+    public void onPlayerCloned(net.minecraftforge.event.entity.player.PlayerEvent.Clone event) {
+        if (event.isWasDeath()) {
+            // We need to copyFrom the capabilities
+            if (event.getOriginal().hasCapability(PlayerProperties.PLAYER_FAT, null)) {
+                PlayerFat oldStore = event.getOriginal().getCapability(PlayerProperties.PLAYER_FAT, null);
+                PlayerFat newStore = PlayerProperties.getPlayerMana(event.getEntityPlayer());
+                newStore.copyFrom(oldStore);
+            }
+        }
+    }
     @SubscribeEvent
     public void respawnEvent(PlayerEvent.PlayerRespawnEvent event) {
         if (!event.player.world.isRemote) {
@@ -233,96 +267,98 @@ public class Konoa77kg {
             EntityPlayer player = e.player;
 
             if (player.hasCapability(KonoFatProvider.Fat_CAP, null)) {
-                IKonoFat fat = player.getCapability(KonoFatProvider.Fat_CAP, null);
 
-                int bellyFatModifier = fat.getThickness();//fatlist.get(player.getUniqueID().toString());
+                PlayerFat playerMana = PlayerProperties.getPlayerMana(player);
 
-                if (bellyFatModifier / 2 > 20) {
 
-                    if (e.side == Side.SERVER && true) {
-                        do {
-                            if(player == null)break;;
-                            if(!player.isSprinting())break;
-                            AxisAlignedBB axis = player.getEntityBoundingBox();//new AxisAlignedBB(player.posX, player.posY, player.posZ, player.lastTickPosX, player.lastTickPosY, player.lastTickPosZ).grow(0.25);
-                            List<EntityLivingBase> entities = player.getEntityWorld().getEntitiesWithinAABB(EntityLivingBase.class, axis);
-                            for (Entity entity : entities) {
-                                if(player.getUniqueID().equals(entity.getUniqueID()))continue;
+                if (e.side == Side.SERVER && true) {
+                    NBTTagCompound nbt = new NBTTagCompound();
 
-                                float f = 5;
-                                    entity.motionX = (double)(-MathHelper.sin(player.rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(player.rotationPitch / 180.0F * (float)Math.PI) * f);
-                                    entity.motionZ = (double)(MathHelper.cos(player.rotationYaw / 180.0F * (float)Math.PI) * MathHelper.cos(player.rotationPitch / 180.0F * (float)Math.PI) * f);
-                                    entity.motionY = (double)(-MathHelper.sin((player.rotationPitch / 180.0F * (float)Math.PI) * f));
 
-                                entity.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) player), 5);
-                            }
-                        }while (false);
+                    int bellyFatModifier = (int) Math.floor(playerMana.getMana());//nbt.getInteger("Fat"+player.getUniqueID().toString() );//fat.getThickness();//fatlist.get(player.getUniqueID().toString());
+                    //if (Sefatlist.get(player.getUniqueID().toString()) != null) bellyFatModifier = Sefatlist.get(player.getUniqueID().toString());
+                        if (bellyFatModifier / 2 > 10) {
+                            do {
+                                if (player == null) break;
 
-                        int i = 0;
-                        List<BlockPos> BreakPostion = new ArrayList<BlockPos>(new HashSet<>(Arrays.asList(
-                                new BlockPos(Math.floor(player.posX-.5f), Math.floor(player.posY) - 1, Math.floor(player.posZ-.5f)),
-                                new BlockPos(Math.round(player.posX), Math.floor(player.posY) - 1, Math.floor(player.posZ-.5f)),
-                                new BlockPos(Math.floor(player.posX-.5f), Math.floor(player.posY) - 1, Math.round(player.posZ)),
-                                new BlockPos(Math.round(player.posX), Math.floor(player.posY) - 1, Math.round(player.posZ)))));
-                        for (BlockPos BreakPos : BreakPostion) {
-                            flag = true;
-                            if (Bcount != 0) {
-                                for (BreakEv b : arr) {
+                                if (!player.isSprinting()) break;
+                                AxisAlignedBB axis = player.getEntityBoundingBox();//new AxisAlignedBB(player.posX, player.posY, player.posZ, player.lastTickPosX, player.lastTickPosY, player.lastTickPosZ).grow(0.25);
+                                List<EntityLivingBase> entities = player.getEntityWorld().getEntitiesWithinAABB(EntityLivingBase.class, axis);
+                                for (Entity entity : entities) {
+                                    if (player.getUniqueID().equals(entity.getUniqueID())) continue;
 
-                                    if (b.getBpos().getX() == BreakPos.getX() && b.getBpos().getZ() == BreakPos.getZ() && b.getBpos().getY() == BreakPos.getY()) {
+                                    //if (entity.getCapability(KonoFatProvider.Fat_CAP, null).getThickness()>40) {
+                                        float f = 5;
+                                        entity.motionX = (double) (-MathHelper.sin(player.rotationYaw / 180.0F * (float) Math.PI) * MathHelper.cos(player.rotationPitch / 180.0F * (float) Math.PI) * f);
+                                        entity.motionZ = (double) (MathHelper.cos(player.rotationYaw / 180.0F * (float) Math.PI) * MathHelper.cos(player.rotationPitch / 180.0F * (float) Math.PI) * f);
+                                        entity.motionY = (double) (-MathHelper.sin((player.rotationPitch / 180.0F * (float) Math.PI) * f));
 
-                                        flag = false;
-                                        if (!b.Breakprg(0.1f, player.world)) {
-                                            World wc = e.player.world;
-                                            IBlockState old = wc.getBlockState(b.getBpos());
-                                            wc.destroyBlock(b.getBpos(), true);
-                                            wc.setBlockState(b.getBpos(),
-                                                    Blocks.AIR.getBlockState().getBaseState());
-                                            wc.notifyBlockUpdate(b.getBpos(), old,
-                                                    Blocks.AIR.getBlockState().getBaseState(), 2);
+                                        entity.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) player), 5);
+                                    //}
+                                }
+                            } while (false);
 
-                                            arr.remove(b);
-                                            break;
+                            int i = 0;
+                            List<BlockPos> BreakPostion = new ArrayList<BlockPos>(new HashSet<>(Arrays.asList(
+                                    new BlockPos(Math.floor(player.posX - .5f), Math.floor(player.posY) - 1, Math.floor(player.posZ - .5f)),
+                                    new BlockPos(Math.round(player.posX), Math.floor(player.posY) - 1, Math.floor(player.posZ - .5f)),
+                                    new BlockPos(Math.floor(player.posX - .5f), Math.floor(player.posY) - 1, Math.round(player.posZ)),
+                                    new BlockPos(Math.round(player.posX), Math.floor(player.posY) - 1, Math.round(player.posZ)))));
+                            for (BlockPos BreakPos : BreakPostion) {
+                                flag = true;
+                                if (Bcount != 0) {
+                                    for (BreakEv b : arr) {
 
+                                        if (b.getBpos().getX() == BreakPos.getX() && b.getBpos().getZ() == BreakPos.getZ() && b.getBpos().getY() == BreakPos.getY()) {
+
+                                            flag = false;
+                                            if (!b.Breakprg(0.1f, player.world)) {
+                                                World wc = e.player.world;
+                                                IBlockState old = wc.getBlockState(b.getBpos());
+                                                wc.destroyBlock(b.getBpos(), true);
+                                                wc.setBlockState(b.getBpos(),
+                                                        Blocks.AIR.getBlockState().getBaseState());
+                                                wc.notifyBlockUpdate(b.getBpos(), old,
+                                                        Blocks.AIR.getBlockState().getBaseState(), 2);
+
+                                                arr.remove(b);
+                                                break;
+
+                                            }
                                         }
                                     }
+                                    i++;
                                 }
-                                i++;
+
+
+                                if (flag) arr.add(new BreakEv(BreakPos, player.world));
                             }
-
-
-                            if (flag) arr.add(new BreakEv(BreakPos, player.world));
                         }
+
+                    if (bellyFatModifier / 2 > 12) {
+                        player.addPotionEffect(effect3);
+                        if (oneCount == 0) {
+                            player.addPotionEffect(effect5);
+                            oneCount = 1;
+                        }
+                        if (player.isRiding())
+                            player.dismountRidingEntity();
+                    } else if (bellyFatModifier / 2 > 8 && bellyFatModifier / 2 < 13) {
+                        player.addPotionEffect(effect2);
+                        if (oneCount == 0) {
+                            player.addPotionEffect(effect4);
+                            oneCount = 1;
+                        }
+                        if (player.isRiding())
+                            player.dismountRidingEntity();
+                    } else if (bellyFatModifier / 2 > 5 && bellyFatModifier / 2 < 9) {
+                        player.addPotionEffect(effect1);
+                        if (player.isRiding())
+                            player.dismountRidingEntity();
+                    } else {
+                        player.removePotionEffect(MobEffects.SLOWNESS);
+                        player.removePotionEffect(MobEffects.ABSORPTION);
                     }
-                    if (player.isAirBorne)
-                        this.Count++;
-                    if (player.isAirBorne && this.Count >= 2)
-                        this.Count = 0;
-                    if (jumpCount == 20)
-                        jumpCount = 0;
-                }
-                if (bellyFatModifier / 2 > 12) {
-                    player.addPotionEffect(effect3);
-                    if (oneCount == 0) {
-                        player.addPotionEffect(effect5);
-                        oneCount = 1;
-                    }
-                    if (player.isRiding())
-                        player.dismountRidingEntity();
-                } else if (bellyFatModifier / 2 > 8 && bellyFatModifier / 2 < 13) {
-                    player.addPotionEffect(effect2);
-                    if (oneCount == 0) {
-                        player.addPotionEffect(effect4);
-                        oneCount = 1;
-                    }
-                    if (player.isRiding())
-                        player.dismountRidingEntity();
-                } else if (bellyFatModifier / 2 > 5 && bellyFatModifier / 2 < 9) {
-                    player.addPotionEffect(effect1);
-                    if (player.isRiding())
-                        player.dismountRidingEntity();
-                } else {
-                    player.removePotionEffect(MobEffects.SLOWNESS);
-                    player.removePotionEffect(MobEffects.ABSORPTION);
                 }
             }
         }

@@ -18,4 +18,5 @@ public class IKonoFatStorage  implements Capability.IStorage<IKonoFat>{
 
         instance.setThickness(((NBTPrimitive)nbt).getInt());
     }
+
 }
